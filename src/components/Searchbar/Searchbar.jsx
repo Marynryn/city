@@ -1,32 +1,27 @@
 import { useState } from "react";
 import { SearchBtn, SearchForm, Input, SearchBtnLabel, HeaderSearchbar } from "./Searchbar.styled";
 
-export function Searchbar({ onSubmit }) {
+export function Searchbar({ onSearch }) {
     const [query, setQuery] = useState("")
 
-    const handleSubmit = event => {
+
+    const handleInputChange = (event) => {
+        setQuery(event.target.value);
+    };
+
+    const handleSubmit = (event) => {
         event.preventDefault();
 
-        onSubmit(query);
-        reset();
-    };
-    const handleChange = event => {
-        setQuery(event.currentTarget.value)
+        onSearch(query);
     }
-    const reset = () => {
-        setQuery('');
-    };
-
     return (
         <HeaderSearchbar >
             <SearchForm onSubmit={handleSubmit}>
                 <Input
-                    className="input"
                     type="text"
-                    autoComplete="off"
-                    autoFocus
-                    placeholder="Search images and photos"
-                    onChange={handleChange}
+                    value={query}
+                    onChange={handleInputChange}
+                    placeholder="Введите название города"
                 />
                 <SearchBtn type="submit">
                     <SearchBtnLabel >Search</SearchBtnLabel>
