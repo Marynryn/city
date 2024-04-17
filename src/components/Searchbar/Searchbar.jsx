@@ -54,7 +54,7 @@ const Searchbar = () => {
     };
     const geocodeCity = async (cityName) => {
         const username = 'marynak'; // Ваше имя пользователя на GeoNames
-        const url = `http://api.geonames.org/searchJSON?q=${encodeURIComponent(cityName)}&maxRows=1&username=${username}`;
+        const url = `https://api.geonames.org/searchJSON?q=${encodeURIComponent(cityName)}&maxRows=1&username=${username}`;
         const response = await axios.get(url);
         const { lat, lng } = response.data.geonames[0];
         return { lat, lng };
@@ -62,7 +62,7 @@ const Searchbar = () => {
 
     const findNearestCity = async (latitude, longitude) => {
         const username = 'marynak'; // Ваше имя пользователя на GeoNames
-        const url = `http://api.geonames.org/findNearbyJSON?lat=${latitude}&lng=${longitude}&radius=300&username=${username}`;
+        const url = `https://api.geonames.org/findNearbyJSON?lat=${latitude}&lng=${longitude}&radius=300&username=${username}`;
         const response = await axios.get(url);
         const nearestCity = response.data.geonames[0].name;
         const country = response.data.geonames[0].countryName;
