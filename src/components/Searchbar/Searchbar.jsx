@@ -45,7 +45,7 @@ const Searchbar = () => {
             setError(null);
             setLoading(false);
         } catch (error) {
-            setError('Ошибка при поиске ближайшего города');
+            setError('Ошибка при поиске города');
             setNearestCity('');
             setNearestCountry('');
             setDistance(null);
@@ -61,7 +61,7 @@ const Searchbar = () => {
     };
 
     const findNearestCity = async (latitude, longitude) => {
-        const username = 'marynak'; // Ваше имя пользователя на GeoNames
+        const username = 'marynak'; 
         const url = `https://api.geonames.org/findNearbyJSON?lat=${latitude}&lng=${longitude}&radius=300&username=${username}`;
         const response = await axios.get(url);
         const nearestCity = response.data.geonames[0].name;
@@ -102,7 +102,7 @@ const Searchbar = () => {
             {loading && <Loader />
             }
             {error && <Error>{error}</Error>}
-            {nearestCity && <><Result>Ближайший город: {nearestCity}</Result>
+            {nearestCity && <><Result>Самый отдаленный город: {nearestCity}</Result>
                 <Result>Страна: {nearestCountry} </Result></>}
             {distance && <Result>Расстояние между городами: {distance.toFixed(2)} км</Result>}
         </Container></>
