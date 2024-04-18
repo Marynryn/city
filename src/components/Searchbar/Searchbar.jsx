@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 import { Container, Error, HeaderSearchbar, Input, Result, SearchBtn, SearchForm } from './Searchbar.styled';
 import { Loader } from 'components/Loader/Loader';
 
 const Searchbar = () => {
-
     const [cityName, setCityName] = useState('');
     const [nearestCity, setNearestCity] = useState('');
     const [nearestCountry, setNearestCountry] = useState('');
@@ -18,7 +17,11 @@ const Searchbar = () => {
     const handleSearch = async (event) => {
         event.preventDefault();
         setLoading(true);
+        setNearestCity('');
+        setNearestCountry('');
+        setDistance(null);
         setError(null);
+
         try {
             const { lat: cityLat, lng: cityLng } = await geocodeCity(cityName);
             const oppositeLat = cityLat * -1;
@@ -26,11 +29,15 @@ const Searchbar = () => {
             const nearestCityData = await findNearestCity(oppositeLat, oppositeLng);
             setNearestCity(nearestCityData.city);
             setNearestCountry(nearestCityData.country);
+
+            // const { lat: nearestLat, lng: nearestLng } = nearestCityData.
+            const newDistance = calculateDistance(cityLat, cityLng, oppositeLat, oppositeLng);
+            setDistance(newDistance);
+
+            setError(null);
             setLoading(false);
         } catch (error) {
             setError('Ошибка при поиске города');
-            setNearestCity('');
-            setNearestCountry('');
             setLoading(false);
         }
     };
@@ -46,12 +53,14 @@ const Searchbar = () => {
         const url = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=${Key}`;
         const response = await axios.get(url);
         const cityObject = response.data.features[0];
+
         if (cityObject) {
             const cityName = cityObject.properties.address_line1;
             const country = cityObject.properties.country;
-            return { city: cityName, country };
+            return { city: cityName, country: country };
+        } else {
+            throw new Error('Город не найден');
         }
-        return { city: '', country: '' };
     };
 
     const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -70,24 +79,6 @@ const Searchbar = () => {
         return degrees * Math.PI / 180;
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (nearestCity) {
-                try {
-                    const { lat: nearestLat, lng: nearestLng } = await geocodeCity(nearestCity);
-                    const { lat: cityLat, lng: cityLng } = await geocodeCity(cityName);
-                    const distance = calculateDistance(cityLat, cityLng, nearestLat, nearestLng);
-                    setDistance(distance);
-                } catch (error) {
-                    setError('Ошибка при поиске ближайшего города');
-                    setDistance(null);
-                }
-            }
-        };
-
-        fetchData();
-    }, [nearestCity]);
-
     return (
         <>
             <HeaderSearchbar>
@@ -104,8 +95,12 @@ const Searchbar = () => {
             <Container>
                 {loading && <Loader />}
                 {error && <Error>{error}</Error>}
-                {nearestCity && <><Result>Самый отдаленный город: {nearestCity}</Result>
-                    <Result>Страна: {nearestCountry}</Result></>}
+                {nearestCity && (
+                    <>
+                        <Result>Самый отдаленный город: {nearestCity}</Result>
+                        <Result>Страна: {nearestCountry}</Result>
+                    </>
+                )}
                 {distance && <Result>Расстояние между городами: {distance.toFixed(2)} км</Result>}
             </Container>
         </>
