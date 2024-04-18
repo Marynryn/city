@@ -12,7 +12,7 @@ const Searchbar = () => {
     const [distance, setDistance] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-
+    const googleKey = 'AIzaSyCduEZkYjqoZtkbdTktC1z5HgotpZbU7BI'
     const handleSearch = async (event) => {
         event.preventDefault();
         setLoading(true);
@@ -61,8 +61,10 @@ const Searchbar = () => {
     };
 
     const findNearestCity = async (latitude, longitude) => {
-        const username = 'marynak'; 
-        const url = `https://api.geonames.org/findNearbyJSON?lat=${latitude}&lng=${longitude}&radius=300&username=${username}`;
+        const username = 'marynak';
+        const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=LATITUDE,LONGITUDE&radius=MAX_RADIUS&type=locality&key=${googleKey}`
+
+            `https://api.geonames.org/findNearbyJSON?lat=${latitude}&lng=${longitude}&radius=300&username=${username}`;
         const response = await axios.get(url);
         const nearestCity = response.data.geonames[0].name;
         const country = response.data.geonames[0].countryName;
