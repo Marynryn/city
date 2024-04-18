@@ -53,23 +53,23 @@ const Searchbar = () => {
         }
     };
     const geocodeCity = async (cityName) => {
-        const username = 'marynak'; // Ваше имя пользователя на GeoNames
-        const url = `https://api.geonames.org/searchJSON?q=${encodeURIComponent(cityName)}&maxRows=1&username=${username}`;
+        ; // Ваше имя пользователя на GeoNames
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(cityName)}&key=${googleKey}`
         const response = await axios.get(url);
-        const { lat, lng } = response.data.geonames[0];
+        const { lat, lng } = response.data.results[0].geometry.location;
         return { lat, lng };
     };
 
     const findNearestCity = async (latitude, longitude) => {
-        const username = 'marynak';
-        const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=LATITUDE,LONGITUDE&radius=MAX_RADIUS&type=locality&key=${googleKey}`
 
-            `https://api.geonames.org/findNearbyJSON?lat=${latitude}&lng=${longitude}&radius=300&username=${username}`;
+        const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=MAX_RADIUS&type=locality&key=${googleKey}`
+
         const response = await axios.get(url);
-        const nearestCity = response.data.geonames[0].name;
-        const country = response.data.geonames[0].countryName;
+        console.log(response)
+        // const nearestCity = response.data.geonames[0].name;
+        // const country = response.data.geonames[0].countryName;
 
-        return { city: nearestCity, country: country };
+        // return { city: nearestCity, country: country };
     };
 
     const calculateDistance = (lat1, lon1, lat2, lon2) => {
